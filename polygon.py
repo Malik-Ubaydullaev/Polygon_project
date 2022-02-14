@@ -56,6 +56,7 @@ class Polygon:
         s = math.sqrt(p*(p-a)*(p-b)*(p-c))
         return s
     # Distance between two points
+   
     def distance(self, p1: tuple, p2: tuple) -> float:
         """
         Calculate the distance between two points.
@@ -70,7 +71,7 @@ class Polygon:
         x2, y2 = p2
         return math.sqrt(math.pow(abs(x2 - x1), 2) + math.pow(abs(y2 - y1), 2))
         
-
+    #Distance ko'rsatishda menda xato ketyapti shekilli
     #Define the method to get all sides of the length of the polygon
     def sides(self) -> list:
         """
