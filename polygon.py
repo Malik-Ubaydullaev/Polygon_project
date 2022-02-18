@@ -33,6 +33,7 @@ class Polygon:
             True if the polygon is valid
             False if the polygon is invalid
         """
+
         vertices = self.vertices
         if len(vertices) < 3:
             return False
@@ -70,6 +71,8 @@ class Polygon:
             pentagon_are = math.sqrt(s * (s - a) * (s - b) * (s - c) * (s - d) * (s - e))
             return round(pentagon_are, 2)
         
+    
+
     # Distance between two points
    
     def distance(self, p1: tuple, p2: tuple) -> float:
@@ -85,6 +88,7 @@ class Polygon:
         x1, y1 = p1
         x2, y2 = p2
         return math.sqrt(((x2 - x1)**2)+((y2-y1)**2))
+
         
     #Define the method to get all sides of the length of the polygon
     def sides(self) -> list:
@@ -104,9 +108,39 @@ class Polygon:
         Returns:
             the perimeter of the polygon
         """
+
         return (sum(self.sides()))
         
 
+    # Calculate the area of the polygon
+    def area(self) -> float:
+        """
+        Calculate the area of the polygon.
+        """
+        vertices = self.vertices
+        polygon_sides = self.sides()
+        perimeter = self.perimeter()
+
+        P = sum(polygon_sides)
+        if len(vertices) < 3:
+            return 0
+        elif len(vertices) == 3:
+            a, b, c = polygon_sides
+            s = perimeter / 2
+            tirangle_are = math.sqrt(s * (s - a) * (s - b) * (s - c))
+            return round(tirangle_are, 2)
+        elif len(vertices) == 4:
+            a, b, c, d = polygon_sides
+            
+            s = perimeter / 2
+            quadrilateral_are = math.sqrt(s * (s - a) * (s - b) * (s - c) * (s - d))
+            return round(quadrilateral_are, 2)
+        elif len(vertices) == 5:
+            a, b, c, d, e = polygon_sides
+            
+            s = perimeter / 2
+            pentagon_are = math.sqrt(s * (s - a) * (s - b) * (s - c) * (s - d) * (s - e))
+            return round(pentagon_are, 2)
 
     #Define the method to calculate the angle between two sides
     def angles(self) -> list:
@@ -115,6 +149,7 @@ class Polygon:
         Returns:
             a list of all angles of the polygon
         """
+
         polygon_area = self.area()
         polygon_sides = self.sides()
         polygon_angles = set()
@@ -131,7 +166,7 @@ class Polygon:
         Calculate the centroid of the polygon.
         Returns:
             a pair of coordinates (x, y)
-        """ 
+
         vertices = self.vertices
         polygon_area = self.area()
         polygon_sides = self.sides()
@@ -148,4 +183,5 @@ class Polygon:
     
 vert = Polygon([(1.5, 2), (4.,5), (7,2)])
 print(vert.is_valid())
+
 
