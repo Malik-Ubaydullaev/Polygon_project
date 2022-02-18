@@ -33,28 +33,43 @@ class Polygon:
             True if the polygon is valid
             False if the polygon is invalid
         """
-        a = distance(self.vertices[0], self.vertices[1])
-        b = distance(self.vertices[1], self.vertices[2])
-        c = distance(self.vertices[0], self.vertices[2])
+        vertices = self.vertices
+        if len(vertices) < 3:
+            return False
+        else:
+            return True 
         
-        if a + b > c:
-            if a + c > b:
-                if b + c > a:
-                    return True
-                
-        return False
-    
     # Calculate the area of the polygon
     def area(self) -> float:
         """
         Calculate the area of the polygon.
         """
-        a = distance(self.vertices[0], self.vertices[1])
-        b = distance(self.vertices[1], self.vertices[2])
-        c = distance(self.vertices[0], self.vertices[2])
-        p = (a + b + c) / 2
-        s = math.sqrt(p*(p-a)*(p-b)*(p-c))
-        return s
+        vertices = self.vertices
+        polygon_sides = self.sides()
+        perimeter = self.perimeter()
+
+        P = sum(polygon_sides)
+        if len(vertices) < 3:
+            return 0
+        elif len(vertices) == 3:
+            a, b, c = polygon_sides
+            # Heron's formula
+            s = perimeter / 2
+            tirangle_are = math.sqrt(s * (s - a) * (s - b) * (s - c))
+            return round(tirangle_are, 2)
+        elif len(vertices) == 4:
+            a, b, c, d = polygon_sides
+            # Heron's formula
+            s = perimeter / 2
+            quadrilateral_are = math.sqrt(s * (s - a) * (s - b) * (s - c) * (s - d))
+            return round(quadrilateral_are, 2)
+        elif len(vertices) == 5:
+            a, b, c, d, e = polygon_sides
+            # Heron's formula
+            s = perimeter / 2
+            pentagon_are = math.sqrt(s * (s - a) * (s - b) * (s - c) * (s - d) * (s - e))
+            return round(pentagon_are, 2)
+        
     # Distance between two points
    
     def distance(self, p1: tuple, p2: tuple) -> float:
@@ -69,9 +84,8 @@ class Polygon:
         # d = √[(x2 − x1)**2 + (y2 − y1)**2]
         x1, y1 = p1
         x2, y2 = p2
-        return math.sqrt(math.pow(abs(x2 - x1), 2) + math.pow(abs(y2 - y1), 2))
+        return math.sqrt(((x2 - x1)**2)+((y2-y1)**2))
         
-    #Distance ko'rsatishda menda xato ketyapti shekilli
     #Define the method to get all sides of the length of the polygon
     def sides(self) -> list:
         """
@@ -79,15 +93,9 @@ class Polygon:
         Returns:
             a list of all sides of the polygon
         """
-        side_a = distance(self.vertices[0], self.vertices[1])
-        side_b = distance(self.vertices[1], self.vertices[2])
-        side_c = distance(self.vertices[0], self.vertices[2])
-        
-        sides_op = []
-        sides_op.append(side_a)
-        sides_op.append(side_b)
-        sides_op.append(side_c)
-        return sides_op
+        vertices = self.vertices
+        polygon_sides = [self.distance(vertices[-1], vertices[0])] + [self.distance(vertices[i], vertices[i+1]) for i in range(len(vertices)-1)]
+        return polygon_sides
      
      # Define the method to calculate the perimeter of the polygon
     def perimeter(self) -> float:
@@ -96,12 +104,9 @@ class Polygon:
         Returns:
             the perimeter of the polygon
         """
-        peri_metr = 0
-        peri_metr += distance(self.vertices[0], self.vertices[1])
-        peri_metr += distance(self.vertices[1], self.vertices[2])
-        peri_metr += distance(self.vertices[0], self.vertices[2])
+        return (sum(self.sides()))
         
-        return peri_metr
+
 
     #Define the method to calculate the angle between two sides
     def angles(self) -> list:
@@ -110,13 +115,15 @@ class Polygon:
         Returns:
             a list of all angles of the polygon
         """
-        a = distance(self.vertices[0], self.vertices[1])
-        b = distance(self.vertices[1], self.vertices[2])
-        c = distance(self.vertices[0], self.vertices[2])
-        alpha = math.cos((math.pow(a,2) + math.pow(c,2) - math.pow(b,2))/(2*a*c))
-        betta = math.cos((math.pow(a,2) + math.pow(b,2) - math.pow(c,2))/(2*a*b))
-        gamma = math.cos((math.pow(b,2) + math.pow(c,2) - math.pow(a,2))/(2*c*b))
-        return [alpha, betta, gamma]
+        polygon_area = self.area()
+        polygon_sides = self.sides()
+        polygon_angles = set()
+        for a in polygon_sides:
+            for b in polygon_sides:
+                if a != b:
+                    alpha = math.degrees(math.asin(2*polygon_area/(a*b)))
+                    polygon_angles.add(alpha)
+        return list(polygon_angles)
         
     #Define the method to calculate the centroid of the polygon
     def centroid(self) -> tuple:
@@ -125,17 +132,20 @@ class Polygon:
         Returns:
             a pair of coordinates (x, y)
         """ 
-        i = 0
-        x = 0
-        y = 0
-        while i < len(self.vertices):
-            x += self.vertices[i][0]
-            y += self.vertices[i][1]
-            i += 1
-        centr_oid = (x/3, y/3)
-        return centr_oid
+        vertices = self.vertices
+        polygon_area = self.area()
+        polygon_sides = self.sides()
+        
+        x_sum = 0
+        y_sum = 0
+        for i in range(len(vertices)):
+            x_sum += vertices[i][0] * polygon_sides[i]
+            y_sum += vertices[i][1] * polygon_sides[i]
+
+        x_centroid = x_sum / (6 * polygon_area)
+        y_centroid = y_sum / (6 * polygon_area)
+        return (round(x_centroid, 2), round(y_centroid, 2))
     
-vert = Polygon([(4,5), (1.5,2), (7,2)])
-print(vert.angles())
-    
+vert = Polygon([(1.5, 2), (4.,5), (7,2)])
+print(vert.is_valid())
 
